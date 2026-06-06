@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParkOS — Parking Lot Management</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M13 3H6v18h4v-6h3a5 5 0 000-10zm0 6H10V7h3a1 1 0 010 2z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">ParkOS</div>
+      <div class="logo-sub">Lot Management System</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="clock" id="clock">00:00:00</div>
+  </div>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-card total">
+      <div class="stat-label">Total Slots</div>
+      <div class="stat-value" id="statTotal">—</div>
+    </div>
+    <div class="stat-card empty">
+      <div class="stat-label">Available</div>
+      <div class="stat-value" id="statEmpty">—</div>
+    </div>
+    <div class="stat-card occupied">
+      <div class="stat-label">Occupied</div>
+      <div class="stat-value" id="statOccupied">—</div>
+    </div>
+    <div class="stat-card revenue">
+      <div class="stat-label">Rate / Hr</div>
+      <div class="stat-value">₹100</div>
+    </div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <div class="section-title">Parking Grid</div>
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot empty"></div>Empty</div>
+        <div class="legend-item"><div class="legend-dot occupied"></div>Occupied</div>
+      </div>
+      <button class="btn-refresh" id="refreshBtn">↻ REFRESH</button>
+    </div>
+  </div>
+
+  <!-- Slots Grid -->
+  <div class="slots-grid" id="slotsGrid">
+    <!-- Populated by JS -->
+    <div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:2px;">
+      LOADING SLOTS...
+    </div>
+  </div>
+
+</main>
+
+<!-- ── CHECK-IN MODAL ───────────────────────────────────────────── -->
+<div class="modal-backdrop" id="modalCheckin">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🟢 Check In — Slot <span id="ciSlotNum"></span></div>
+      <button class="modal-close" onclick="document.getElementById('modalCheckin').classList.remove('open');loadSlots()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="formCheckin">
+        <input type="hidden" id="ciSlotId">
+        <div class="form-group">
+          <label class="form-label">Car Number Plate</label>
+          <input type="text" id="ciCarNumber" class="form-control" placeholder="e.g. DL 01 AB 1234" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Car Owner Name</label>
+          <input type="text" id="ciCarOwner" class="form-control" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Car Type</label>
+          <select id="ciCarType" class="form-control">
+            <option>Sedan</option>
+            <option>SUV</option>
+            <option>Hatchback</option>
+            <option>Truck</option>
+            <option>Motorcycle</option>
+            <option>Electric Vehicle</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-checkin">CHECK IN</button>
+      </form>
+      <div id="checkinResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHECK-OUT MODAL ──────────────────────────────────────────── -->
+<div class="modal-backdrop" id="modalCheckout">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🔴 Check Out — Slot <span id="coSlotNum"></span></div>
+      <button class="modal-close" onclick="document.getElementById('modalCheckout').classList.remove('open');loadSlots()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="coSlotId">
+      <div class="token-card">
+        <div class="token-detail"><span class="token-key">CAR NUMBER</span><span class="token-val" id="coCarNumber">—</span></div>
+        <div class="token-detail"><span class="token-key">OWNER</span><span class="token-val" id="coCarOwner">—</span></div>
+        <div class="token-detail"><span class="token-key">CAR TYPE</span><span class="token-val" id="coCarType">—</span></div>
+        <div class="token-detail"><span class="token-key">CHECK-IN TIME</span><span class="token-val" id="coCheckIn">—</span></div>
+      </div>
+      <div style="margin-top:1rem;padding:0.8rem;background:var(--red-dim);border:1px solid rgba(255,23,68,0.2);font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);letter-spacing:1px;">
+        ⚠ Fare: ₹100 for first hour · ₹50 per additional hour
+      </div>
+      <button class="btn btn-checkout" id="btnCheckout" style="margin-top:1rem;">CONFIRM CHECKOUT</button>
+      <div id="checkoutResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ───────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
